@@ -114,6 +114,7 @@ export function triggerEffects(deps) {
 
 export function effect(fn, options: any = {}) {
   const scheduler = options.scheduler
+  // 
   const _effect = new ReactiveEffect(fn, scheduler)
   extend(_effect, options)
   _effect.run()
