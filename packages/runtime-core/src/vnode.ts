@@ -28,8 +28,6 @@ export function createVNode(type, props?, children?) {
 }
 
 export function createTextVNode(children) {
-  console.log('children', createVNode(Text, {}, children));
-  
   return createVNode(Text, {}, children)
 }
 

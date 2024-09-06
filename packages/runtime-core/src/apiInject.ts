@@ -18,7 +18,6 @@ export function provider(key, value) {
 
     provides[key] = value
   }
-
 }
 
 export function inject(key, defaultValue){
