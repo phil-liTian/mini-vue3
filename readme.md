@@ -153,6 +153,7 @@ export function provider(key, value) {
 
 
 实现的核心api有
+```js
   1. createApp 实现app实例的创建
   2. createRenderer 实现自定义渲染器
   3. createVNode 实现虚拟dom的创建
@@ -161,8 +162,5 @@ export function provider(key, value) {
   6. getCurrentInstance 实现获取当前实例
   7. h 实现虚拟dom的创建
   8. provide & inject 实现跨级组件通讯
-
-
-
-
+```
 
