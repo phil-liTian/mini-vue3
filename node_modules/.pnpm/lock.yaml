@@ -14,6 +14,9 @@ importers:
       '@mini-vue/runtime-core':
         specifier: workspace:^1.0.0
         version: link:packages/runtime-core
+      '@mini-vue/runtime-dom':
+        specifier: workspace:^1.0.0
+        version: link:packages/runtime-dom
       '@mini-vue/shared':
         specifier: workspace:^1.0.0
         version: link:packages/shared
@@ -56,6 +59,8 @@ importers:
       '@mini-vue/shared':
         specifier: workspace:^1.0.0
         version: link:../shared
+
+  packages/runtime-dom: {}
 
   packages/shared: {}
 

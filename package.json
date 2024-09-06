@@ -15,6 +15,7 @@
     "@mini-vue/reactivity": "workspace:^1.0.0",
     "@mini-vue/runtime-core": "workspace:^1.0.0",
     "@mini-vue/shared": "workspace:^1.0.0",
+    "@mini-vue/runtime-dom": "workspace:^1.0.0",
     "@rollup/plugin-typescript": "^11.1.6",
     "@types/jest": "^29.5.12",
     "jest": "^29.7.0",

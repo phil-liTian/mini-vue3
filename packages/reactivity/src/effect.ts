@@ -78,6 +78,7 @@ export function track(target, key) {
 export function trackEffects(deps)  {
   if ( !isTracking() ) return
   deps.add(activeEffect)
+  
   // 反向收集deps，便于在stop方法中清空当前deps中的effect
   activeEffect.deps.push(deps)
 }

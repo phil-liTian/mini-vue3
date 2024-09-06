@@ -24,5 +24,14 @@ export const publicInstanceProxyHandlers = {
       return publicGetter(instance)
     }
 
+  },
+
+  set({ _: instance }, key, value) {
+    
+    const { setupState } = instance
+    if ( key in setupState ) {
+      setupState[key] = value
+    }
+    return true
   }
 }

@@ -3,15 +3,22 @@ import { emit } from "./componentEmit"
 import { initProps } from "./componentProps"
 import { publicInstanceProxyHandlers } from "./componentPublicInstance"
 import { initSlots } from "./componentSlots"
+import { proxyRefs } from "@mini-vue/reactivity"
 
-export function createComponentInstance(vnode) {
+let currentInstance = {}
+export function createComponentInstance(vnode, parent) {
+  
   let component = {
+    isMounted: false,
     vnode, // virture Dom
     type: vnode.type, // 组件类型 可以是对象或者string类型
     setupState: {}, // 存储setup的返回值
     ctx: {}, // 组件实例上下文对象
     props: {}, // 组件props
     emit: () => {},
+    slots: {},
+    parent, // 父级组件
+    provides: parent ? parent.provides : {} // 实现跨级组件通讯
   }
 
   component.ctx = {
@@ -26,6 +33,7 @@ export function createComponentInstance(vnode) {
 export function setupComponent(instance) {
   const { props, children } = instance.vnode
   initProps(instance, props)
+  
   initSlots(instance, children)
   setupStatefulComponent(instance)
 }
@@ -36,15 +44,17 @@ function setupStatefulComponent(instance: any) {
   instance.proxy = new Proxy(instance.ctx, publicInstanceProxyHandlers)
 
   if ( setup ) {
+    setCurrentInstance(instance)
     const setupResult = setup()
     handleSetupResult(instance, setupResult)
+    setCurrentInstance(null)
   }
 }
 
 function handleSetupResult(instance: any, setupResult: any) {
   // 还有可能是一个函数
   if ( isObject(setupResult) ) {
-    instance.setupState = setupResult
+    instance.setupState = proxyRefs(setupResult)
   }
   finishComponentSetup(instance)
 }
@@ -57,3 +67,11 @@ function finishComponentSetup(instance: any) {
   }
 }
 
+
+function setCurrentInstance(instance) {
+  currentInstance = instance
+}
+
+export function getCurrentInstance() {
+  return currentInstance
+}

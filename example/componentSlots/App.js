@@ -1,17 +1,23 @@
 
-import { h } from '../../lib/mini-vue.esm.js'
+import { h, createTextVNode, getCurrentInstance } from '../../lib/mini-vue.esm.js'
 import Foo from './Foo.js'
 
 const App = {
+  name: 'App',
   render(props) {
     return h(Foo, {}, {
-      header: ({ age = 1 }) => 'Header',
-      Footer: ({ age = 100 }) => 'Footer'
+      header: ({ name }) => h('p', {}, 'header:' + name),
+      // default: h('p', {}, 'default'),
+      footer: () => h('p', {}, 'footer')
     })
+    
+    // return createTextVNode('children')
   },
 
   setup() {
-    
+    console.log('getCurrentInstance--->', getCurrentInstance());
+
+    // return 
   }
 }
 

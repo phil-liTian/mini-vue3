@@ -1,1 +1,1 @@
-export * from './runtime-core/src/index'
+export * from '@mini-vue/runtime-dom'

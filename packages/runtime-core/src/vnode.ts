@@ -1,5 +1,7 @@
 import { ShapeFlags } from "@mini-vue/shared"
 
+export const Fragment = Symbol('Fragment')
+export const Text = Symbol('Text')
 export function createVNode(type, props?, children?) {
   const vnode = {
     type,
@@ -24,6 +26,13 @@ export function createVNode(type, props?, children?) {
 
   return vnode
 }
+
+export function createTextVNode(children) {
+  console.log('children', createVNode(Text, {}, children));
+  
+  return createVNode(Text, {}, children)
+}
+
 
 // 给不同类型组件增加标识
 function getShapeFlag(type) {

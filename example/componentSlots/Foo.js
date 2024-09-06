@@ -1,19 +1,19 @@
-import { h, renderSlot } from '../../lib/mini-vue.esm.js'
+import { h, renderSlot, getCurrentInstance } from '../../lib/mini-vue.esm.js'
 const Foo = {
+  name: 'Foo',
   render(props, { slots }) {
-    console.log('this.$slots.header', this.$slots.header);
-
-    // 在子组件中如何使用父组件传过来的props呢？
+    // console.log('slots-->', renderSlot(slots));
     // 作用域插槽如何处理？
     // 既然children是一个对象 那么array的作用是什么?
-    return h('div', {}, [
-      // h('p', {}, renderSlot(slots, 'header', { age: 18 }) ),
-      h('p', {}, 'Foo'),
-      h('p', {}, this.$slots.footer)
+    return h('div', { id: '12' }, [
+      renderSlot(slots, 'header', { name: 'jack' }),
+      h('div', {}, 'Foo'),
+      // renderSlot(slots, 'footer')
     ])
   },
 
   setup() {
+    console.log('getCurrentInstance-->', getCurrentInstance());
     return {}
   }
 }
