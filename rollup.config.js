@@ -1,7 +1,7 @@
 
 import typescript from '@rollup/plugin-typescript';
 export default {
-  input: './src/index.ts',
+  input: './packages/index.ts',
   output: [
     {
       format: 'es',
@@ -12,5 +12,10 @@ export default {
       file: 'lib/mini-vue.cjs.js'
     }
   ],
-  plugins: [typescript()]
+  plugins: [typescript()],
+  onwarn: (msg, warn) => {
+    if ( !/Circular/.test(msg) ) {
+      warn(msg)
+    }
+  }
 }
