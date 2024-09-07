@@ -8,6 +8,7 @@ export function createVNode(type, props?, children?) {
     props,
     children,
     el: null,
+    key: props && props.key,
     shapeFlag: getShapeFlag(type), // 添加标识 是否元素，还是组件, children 是string还是array, 或者是插槽
   }
 

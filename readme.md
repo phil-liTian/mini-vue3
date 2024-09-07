@@ -149,8 +149,71 @@ export function provider(key, value) {
 ```
 
 双端diff算法实现
+核心: 先从左侧比较,锁定第一个不同元素的下标;再从右侧比较, 锁定比较对象的最大下标.缩小需要操作移动、删除、增加等行为的元素下表的范围, 采用最长递增子序列的算法实现最小移动，实现最优解
+```js 
+// 处理中间乱序的部分
+let s1 = i, s2 = i, patched = 0, toBePatched = e2 - i + 1;
+let moved = false;
+let maxIndexSoFar = 0;
 
+// 先处理元素删除逻辑(在老的结构里面有, 新的结构里面没有;则删除), 使用map结构存储在新结构了里面key跟index的map结构, 遍历查看在老的结构里面有没有，如果在老结构里面有新结构里面没有则删除
+const keyToNewIndexMap = new Map()
+for (let i = s2; i <= e2; i++) {
+  const nextChild = c2[i]
+  keyToNewIndexMap.set(nextChild.key, i)
+}
 
+// 新结构的index在老结构中index的映射关系
+let newIndexToOldIndexMap = new Array(toBePatched).fill(0)
+
+for (let i = s1; i <= e1; i++) {
+  // 删除逻辑优化点:
+  // 1.如果新结构里面的节点处理完成了，老结构里面还有未处理的都都删除, 无需在继续比较了
+  if ( patched >= toBePatched ) {
+    hostRemove(c1[i].el)
+    continue
+  }
+
+  let newIndex = keyToNewIndexMap.get(c1[i].key)
+  if ( !newIndex ) {
+    hostRemove(c1[i].el)
+  } else {
+    // 优化点3: 在新节点中的顺序相较老节点顺序发生变化, 则需要计算最长递增子序列
+    if ( newIndex > maxIndexSoFar ) {
+      maxIndexSoFar = newIndex
+    } else {
+      moved = true
+    }
+
+    newIndexToOldIndexMap[newIndex - s2] = i + 1
+    patch(c1[i], c2[newIndex], container, parentComponent, anchor);
+    patched++
+  }
+}
+
+// 获取最长递增子序列 => [1,2]
+// 要确保anchor元素是已经确定了位置的元素, 所以此处采用倒叙实现
+const newCreasingNewIndexSequence = moved ? getSequence(newIndexToOldIndexMap) : []
+let j = newCreasingNewIndexSequence.length - 1
+
+for (let i = toBePatched - 1; i >= 0; i--) {
+  const nextIndex = s2 + i
+  const nextChild = c2[nextIndex]
+  const anchor = nextIndex + 1 < c2.length ? c2[nextIndex + 1].el : null
+
+  if ( newIndexToOldIndexMap[i] === 0) {
+    patch(null, nextChild, container, parentComponent, anchor)
+  } else if ( moved ) {
+    // 优化点2: 如果 j < 0 则后续比较的元素都是需要插入的
+    if ( j < 0 && newCreasingNewIndexSequence[j] !== i ) {
+      // 如果新节点不在newCreasingNewIndexSequence中，则需要移动
+      hostInsert(nextChild.el, container, anchor)
+    } else {
+      j--
+    }
+  }
+}
+```
 
 实现的核心api有
 ```js
@@ -162,5 +225,5 @@ export function provider(key, value) {
   6. getCurrentInstance 实现获取当前实例
   7. h 实现虚拟dom的创建
   8. provide & inject 实现跨级组件通讯
+// 还有一些相关功能: 组件代理对象、$emit、$props、$slots实现
 ```
-

@@ -21,20 +21,30 @@ function patchProp(el, key, oldProp, newProp) {
   }
 }
 
-function insert(el, container) {
-  container.appendChild(el)
+function insert(el, container, anchor = null) {
+  // container.appendChild(el)
+  container.insertBefore(el, anchor)
 }
 
-function setElementContext(el, str) {
+function remove(child) {
+  const parent = child.parentNode
+  if ( parent ) {
+    parent.removeChild(child)
+  }
+}
+
+function setElementText(el, str) {
   el.textContent = str
 }
+
 
 const endureRenderer = () => {
   return createRenderer({
     createElement,
     patchProp,
     insert,
-    setElementContext
+    setElementText,
+    remove
   })
 }
 

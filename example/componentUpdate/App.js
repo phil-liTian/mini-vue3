@@ -2,19 +2,15 @@ import { h, ref, reactive } from '../../lib/mini-vue.esm.js'
 
 const App = {
   render() {
-    // return h('div', { foo: this.obj.foo, bar: this.obj.bar }, [
-    //   h('div', {}, `count:${this.count}`),
-    //   h('button', {
-    //     onClick: () => {
-    //       // this.state.count++
-          
-    //       this.count++
-    //     }
-    //   }, 'add'),
-    //   h('div', {}, `count:${this.state.count}`),
+    return h('div', {}, )
+
+    // return h('div', { foo: this.obj.foo, bar: this.obj.bar },
+    //   [
     //   h('button', {
     //     onClick: () => {
     //       this.obj.foo = 'foo-new'
+    //       console.log('this.obj', this.obj);
+          
     //     }
     //   }, 'update'),
     //   h('button', {
@@ -22,33 +18,10 @@ const App = {
     //       this.obj.foo = undefined
     //     }
     //   }, 'set undefined'),
-    //   h('button', {
-    //     onClick: () => {
-    //       this.obj = {
-    //         foo: 'foo-new'
-    //       }
-    //     }
+    //   h('button', { 
+    //     onClick: this.changeObj 
     //   }, 'set foo')
     // ])
-
-    return h('div', { foo: this.obj.foo, bar: this.obj.bar },
-      [
-      h('button', {
-        onClick: () => {
-          this.obj.foo = 'foo-new'
-          console.log('this.obj', this.obj);
-          
-        }
-      }, 'update'),
-      h('button', {
-        onClick: () => {
-          this.obj.foo = undefined
-        }
-      }, 'set undefined'),
-      h('button', { 
-        onClick: this.changeObj 
-      }, 'set foo')
-    ])
   },
 
   setup() {
