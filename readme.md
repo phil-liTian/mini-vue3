@@ -225,5 +225,5 @@ for (let i = toBePatched - 1; i >= 0; i--) {
   6. getCurrentInstance 实现获取当前实例
   7. h 实现虚拟dom的创建
   8. provide & inject 实现跨级组件通讯
-// 还有一些相关功能: 组件代理对象、$emit、$props、$slots实现
+// 还有一些相关功能: 组件代理对象、$emit、$props、$slots实现、组件更新、nextTick
 ```

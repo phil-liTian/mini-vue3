@@ -4,6 +4,9 @@ import { createComponentInstance, setupComponent } from "./components"
 import { shallowReadonly, effect } from "@mini-vue/reactivity"
 import { Fragment, Text } from "./vnode"
 import { createAppApi } from "./createApp"
+import { shouldUpdateComponent } from "./componentRenderUtils"
+import { queueJob } from './schedule'
+
 
 
 export function createRenderer(options) {
@@ -266,11 +269,24 @@ export function createRenderer(options) {
 
   function processComponent(n1, n2: any, container: any, parentComponent, anchor) {
     // TODO updateComponent
-    mountComponent(n2, container, parentComponent, anchor)
+    if ( !n1 ) {
+      mountComponent(n2, container, parentComponent, anchor)
+    } else {
+      updateComponent(n1, n2, container)
+    }
+  }
+
+  function updateComponent(n1, n2, container) {
+    // 组件实例
+    const instance = n2.component = n1.component
+    instance.next = n2
+    if ( shouldUpdateComponent(n1, n2) ) {
+      instance.update()
+    }
   }
 
   function mountComponent(initialVNode: any, container: any, parentComponent, anchor) {
-    const instance = createComponentInstance(initialVNode, parentComponent)
+    const instance = initialVNode.component = createComponentInstance(initialVNode, parentComponent)
     setupComponent(instance)
 
     setupRenderEffect(instance, initialVNode, container, anchor)
@@ -278,8 +294,9 @@ export function createRenderer(options) {
 
   function setupRenderEffect(instance, initialVNode, container, anchor) {
     const { proxy, props, emit, slots } = instance
-    effect(() => {
+    instance.update = effect(() => {
       if ( !instance.isMounted ) {
+        console.log('init');
         // 初次加载 执行挂载逻辑
         const subTree = instance.render.call(proxy, shallowReadonly(props), { emit, slots })
         // patch之后 subTree就会挂载上真实DOM,将真实DOM挂载到组件对象上, 在render函数中即可直接取到该对象
@@ -288,6 +305,12 @@ export function createRenderer(options) {
         instance.subTree = subTree
         instance.isMounted = true
       } else {
+        console.log('update');
+        const { next, vnode } = instance
+        if ( next ) {
+          // next.el = vnode.el
+          updateComponentPreRender(instance, next)
+        }
         // 执行更新逻辑
         const subTree = instance.render.call(proxy, shallowReadonly(props), { emit, slots })
         // patch之后 subTree就会挂载上真实DOM,将真实DOM挂载到组件对象上, 在render函数中即可直接取到该对象
@@ -298,7 +321,16 @@ export function createRenderer(options) {
         initialVNode.el = subTree.el
       }
       
+    }, {
+      scheduler() {
+        queueJob(instance.update)
+      }
     })
+  }
+
+  function updateComponentPreRender(instance, nextVNode) {
+    // instance.vnode = nextVNode
+    instance.props = nextVNode.props
   }
 
 

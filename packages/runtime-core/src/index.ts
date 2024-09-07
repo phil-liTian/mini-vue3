@@ -5,5 +5,6 @@ export * from './components'
 export * from './vnode'
 export * from './apiInject'
 export * from './renderer'
+export { nextTick } from  './schedule'
 
 
